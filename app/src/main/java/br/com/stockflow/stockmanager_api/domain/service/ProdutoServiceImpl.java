@@ -1,6 +1,7 @@
 package br.com.stockflow.stockmanager_api.domain.service;
 
 import br.com.stockflow.stockmanager_api.adapter.repository.entity.ProdutoEntity;
+import br.com.stockflow.stockmanager_api.adapter.repository.mapper.ProdutoEntityMapper;
 import br.com.stockflow.stockmanager_api.domain.model.Produto;
 import br.com.stockflow.stockmanager_api.domain.ports.out.ProdutoPortOut;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ public class ProdutoServiceImpl implements ProdutoService{
     @Autowired
     private ProdutoPortOut produtoPortOut;
 
+    @Autowired
+    private ProdutoEntityMapper produtoEntityMapper;
+
 
     @Override
     public void cadastrar(Produto produto) {
-        ProdutoEntity produtoEntity;
-        produtoEntity = new ProdutoEntity(produto);
+        ProdutoEntity produtoEntity = new ProdutoEntity(produto);
         produtoPortOut.save(produtoEntity);
     }
 
@@ -32,11 +35,7 @@ public class ProdutoServiceImpl implements ProdutoService{
 
         for (ProdutoEntity produtoEntity : produtoEntities) {
 
-            Produto produto = new Produto();
-            produto.setNome(produtoEntity.getNome());
-            produto.setId(produtoEntity.getId());
-            produto.setDescricao(produtoEntity.getDescricao());
-            produto.setValor(produtoEntity.getValor());
+            Produto produto = produtoEntityMapper.converter(produtoEntity);
 
             produtos.add(produto);
 
