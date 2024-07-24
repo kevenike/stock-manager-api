@@ -5,10 +5,12 @@ import br.com.stockflow.stockmanager_api.adapter.repository.mapper.ProdutoEntity
 import br.com.stockflow.stockmanager_api.domain.model.Produto;
 import br.com.stockflow.stockmanager_api.domain.ports.out.ProdutoPortOut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -48,12 +50,13 @@ public class ProdutoServiceImpl implements ProdutoService{
         Optional<ProdutoEntity> produtoExistente = produtoPortOut.findById(id);
         if (produtoExistente.isPresent()){
             ProdutoEntity atualizado = produtoExistente.get();
-            atualizado.setNome(produto.getNome());
-            atualizado.setDescricao(produto.getDescricao());
-            atualizado.setValor(produto.getValor());
+            produtoEntityMapper.atualizarProdutoEntity(atualizado, produto);
 
             ProdutoEntity entidadeAtualizada = produtoPortOut.save(atualizado);
-            return Optional.of(new Produto(entidadeAtualizada));
+            Produto produtoAtualizado = produtoEntityMapper.converter(entidadeAtualizada);
+            return Optional.of(produtoAtualizado);
+
+
         }else {
             return Optional.empty();
         }
@@ -71,5 +74,11 @@ public class ProdutoServiceImpl implements ProdutoService{
         }
     }
 
+    @Override
+    public Produto detalharProduto(String id) {
+        Optional<ProdutoEntity> produtoDetalhado = produtoPortOut.findById(id);
+
+        return produtoDetalhado.map(produtoEntityMapper::converter).orElse(null);
+    }
 
 }

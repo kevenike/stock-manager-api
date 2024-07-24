@@ -5,7 +5,10 @@ import br.com.stockflow.stockmanager_api.adapter.http.mapper.ProdutoDtoMapper;
 import br.com.stockflow.stockmanager_api.domain.model.Produto;
 import br.com.stockflow.stockmanager_api.domain.ports.in.ProdutoPortIn;
 import br.com.stockflow.stockmanager_api.domain.service.ProdutoService;
+import jakarta.validation.Valid;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -27,7 +30,7 @@ public class ProdutoController implements ProdutoPortIn {
 
 
     @PostMapping
-    public ResponseEntity<Produto> cadastrarProduto(@RequestBody ProdutoDto produtoDto){
+    public ResponseEntity<Produto> cadastrarProduto(@RequestBody @Valid ProdutoDto produtoDto){
 
         Produto produto = produtoMapper.converter(produtoDto);
 
@@ -44,9 +47,10 @@ public class ProdutoController implements ProdutoPortIn {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizaProduto(@PathVariable String id, @RequestBody Produto produto){
+    public ResponseEntity<Produto> atualizaProduto(@PathVariable String id, @RequestBody @Valid ProdutoDto produtoDto){
 
         //TODO usar DTO e converter para domain Produto.
+        Produto produto = produtoMapper.converter(produtoDto);
 
         Optional<Produto> atualizado = produtoService.atualizarProduto(id, produto);
         if (atualizado.isPresent()) {
@@ -64,6 +68,17 @@ public class ProdutoController implements ProdutoPortIn {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Produto> detalharProduto(@PathVariable String id){
+        Produto produto = produtoService.detalharProduto(id);
+        if (produto != null) {
+            return new ResponseEntity<>(produto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
 

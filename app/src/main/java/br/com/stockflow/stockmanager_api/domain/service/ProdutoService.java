@@ -17,4 +17,6 @@ public interface ProdutoService {
 
     boolean deletarProdutoPorid(String id);
 
+    Produto detalharProduto(String id);
+
 }
