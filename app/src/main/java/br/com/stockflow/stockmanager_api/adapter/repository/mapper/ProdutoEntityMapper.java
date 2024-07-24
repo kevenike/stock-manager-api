@@ -4,6 +4,8 @@ import br.com.stockflow.stockmanager_api.adapter.repository.entity.ProdutoEntity
 import br.com.stockflow.stockmanager_api.domain.model.Produto;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class ProdutoEntityMapper {
 
@@ -15,4 +17,11 @@ public class ProdutoEntityMapper {
         produto.setValor(produtoEntity.getValor());
         return produto;
     }
+
+    public void atualizarProdutoEntity(ProdutoEntity produtoEntity, Produto produto) {
+        produtoEntity.setNome(produto.getNome());
+        produtoEntity.setDescricao(produto.getDescricao());
+        produtoEntity.setValor(produto.getValor());
+    }
+
 }
