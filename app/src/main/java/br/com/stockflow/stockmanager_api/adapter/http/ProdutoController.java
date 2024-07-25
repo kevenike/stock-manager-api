@@ -6,21 +6,18 @@ import br.com.stockflow.stockmanager_api.domain.model.Produto;
 import br.com.stockflow.stockmanager_api.domain.ports.in.ProdutoPortIn;
 import br.com.stockflow.stockmanager_api.domain.service.ProdutoService;
 import jakarta.validation.Valid;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/produto")
-public class ProdutoController implements ProdutoPortIn {
+public class ProdutoController implements ProdutoPortIn<ProdutoDto, ResponseEntity> {
 
     @Autowired
     private ProdutoService produtoService;
@@ -30,7 +27,7 @@ public class ProdutoController implements ProdutoPortIn {
 
 
     @PostMapping
-    public ResponseEntity<Produto> cadastrarProduto(@RequestBody @Valid ProdutoDto produtoDto){
+    public ResponseEntity<Produto> cadastrarProduto(@RequestBody @Valid ProdutoDto produtoDto) {
 
         Produto produto = produtoMapper.converter(produtoDto);
 
@@ -40,14 +37,13 @@ public class ProdutoController implements ProdutoPortIn {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<Produto> listarProduto() {
-
-        return produtoService.listarProdutos();
-
+    public ResponseEntity listarProduto() {
+        List<Produto> produtos = produtoService.listarProdutos();
+        return ResponseEntity.ok(produtos);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizaProduto(@PathVariable String id, @RequestBody @Valid ProdutoDto produtoDto){
+    public ResponseEntity<Produto> atualizaProduto(@PathVariable String id, @RequestBody @Valid ProdutoDto produtoDto) {
 
         //TODO usar DTO e converter para domain Produto.
         Produto produto = produtoMapper.converter(produtoDto);
@@ -61,7 +57,7 @@ public class ProdutoController implements ProdutoPortIn {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Produto> deletarProduto(@PathVariable String id){
+    public ResponseEntity<Produto> deletarProduto(@PathVariable String id) {
         boolean deletado = produtoService.deletarProdutoPorid(id);
         if (deletado) {
             return ResponseEntity.noContent().build();
@@ -71,7 +67,7 @@ public class ProdutoController implements ProdutoPortIn {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> detalharProduto(@PathVariable String id){
+    public ResponseEntity<Produto> detalharProduto(@PathVariable String id) {
         Produto produto = produtoService.detalharProduto(id);
         if (produto != null) {
             return new ResponseEntity<>(produto, HttpStatus.OK);

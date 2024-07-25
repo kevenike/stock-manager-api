@@ -1,10 +1,15 @@
 package br.com.stockflow.stockmanager_api.domain.ports.in;
 
-import br.com.stockflow.stockmanager_api.domain.model.Produto;
+public interface ProdutoPortIn<Entrada, Saida> {
 
-import java.util.List;
+    Saida cadastrarProduto(Entrada entrada);
 
-public interface ProdutoPortIn {
+    Saida listarProduto();
 
-    List<Produto> listarProduto();
+    Saida atualizaProduto(String id, Entrada obj);
+
+    Saida deletarProduto(String id);
+
+    Saida detalharProduto(String id);
+
 }
