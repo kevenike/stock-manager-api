@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/produto")
-public class ProdutoController implements ProdutoPortIn {
+public class ProdutoController implements ProdutoPortIn<ProdutoDto, ResponseEntity> {
 
     @Autowired
     private ProdutoService produtoService;
@@ -40,10 +40,9 @@ public class ProdutoController implements ProdutoPortIn {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public List<Produto> listarProduto() {
-
-        return produtoService.listarProdutos();
-
+    public ResponseEntity listarProduto() {
+        List<Produto> produtos = produtoService.listarProdutos();
+        return ResponseEntity.ok(produtos);
     }
 
     @PutMapping("/{id}")
